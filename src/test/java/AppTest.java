@@ -2,10 +2,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class SampleTest {
+class AppTest {
 
     @Test
     void test1() {
-        assertEquals(1, Sample.test());
+        assertEquals(1, App.test());
     }
 }
