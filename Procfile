@@ -1,1 +1,1 @@
-web: sh build/install/app/bin/app --host=0.0.0.0 --port=${PORT:-5000}
+web: sh build/install/app/bin/app
