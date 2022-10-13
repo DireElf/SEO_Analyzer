@@ -15,7 +15,7 @@ public class App {
     }
 
     private static void addRoutes(Javalin app) {
-        app.get("/", RootController.welcome);
+        app.get("/", RootController.WELCOME);
     }
 
     private static TemplateEngine getTemplateEngine() {
