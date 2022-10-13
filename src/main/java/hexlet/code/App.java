@@ -10,7 +10,7 @@ import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
 public class App {
     private static int getPort() {
-        String port = System.getenv().get("PORT");
+        String port = System.getenv().getOrDefault("PORT", "5000");
         return Integer.valueOf(port);
     }
 
