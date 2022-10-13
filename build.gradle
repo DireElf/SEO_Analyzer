@@ -6,10 +6,6 @@ plugins {
     id 'checkstyle'
 }
 
-compileJava {
-    options.release = 17
-}
-
 application {
     mainClass = 'hexlet.code.App'
 }
