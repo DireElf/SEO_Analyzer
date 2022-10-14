@@ -7,6 +7,10 @@ plugins {
     id 'io.ebean' version '12.15.1'
 }
 
+compileJava {
+    options.release = 17
+}
+
 application {
     mainClass = 'hexlet.code.App'
 }
