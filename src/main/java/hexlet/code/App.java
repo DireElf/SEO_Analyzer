@@ -14,6 +14,14 @@ public class App {
         return Integer.valueOf(port);
     }
 
+    private static String getMode() {
+        return System.getenv().getOrDefault("APP_ENV", "development");
+    }
+
+    private static boolean isProduction() {
+        return getMode().equals("production");
+    }
+
     private static void addRoutes(Javalin app) {
         app.get("/", RootController.WELCOME);
     }
@@ -30,7 +38,10 @@ public class App {
 
     public static Javalin getApp() {
         Javalin app = Javalin.create(config -> {
-            config.enableDevLogging();
+            if (!isProduction()) {
+                config.enableDevLogging();
+            }
+            config.enableWebjars();
             JavalinThymeleaf.configure(getTemplateEngine());
         });
         addRoutes(app);

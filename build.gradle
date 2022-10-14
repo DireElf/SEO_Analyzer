@@ -4,6 +4,7 @@ plugins {
     id 'jacoco'
     id 'com.adarshr.test-logger' version '3.2.0'
     id 'checkstyle'
+    id 'io.ebean' version '12.15.1'
 }
 
 application {
@@ -24,9 +25,23 @@ dependencies {
     implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.0.0'
     implementation 'org.thymeleaf.extras:thymeleaf-extras-java8time:3.0.4.RELEASE'
 
+    implementation 'com.h2database:h2:2.1.210'
+    implementation 'org.postgresql:postgresql:42.3.3'
+
+    implementation 'io.ebean:ebean:12.15.1'
+    implementation 'io.ebean:ebean-ddl-generator:12.15.1'
+    implementation 'io.ebean:ebean-querybean:12.15.1'
+    implementation 'io.ebean:ebean-migration:12.15.1'
+    implementation 'io.ebean:ebean-annotation:7.7'
+    annotationProcessor 'io.ebean:querybean-generator:12.15.1'
+
+    implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.5'
+    implementation 'javax.activation:activation:1.1.1'
+
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testImplementation 'org.assertj:assertj-core:3.23.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+    testImplementation 'io.ebean:ebean-test:12.15.1'
 }
 
 tasks.named('test') {
@@ -50,6 +65,11 @@ jacoco {
 
 testlogger {
     showStandardStreams true
+}
+
+task generateMigrations(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'hexlet.code.MigrationGenerator'
 }
 
 task stage(dependsOn: ['clean', 'installDist'])
