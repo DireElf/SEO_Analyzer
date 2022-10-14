@@ -44,7 +44,7 @@ public class App {
             JavalinThymeleaf.configure(getTemplateEngine());
         });
         addRoutes(app);
-        app.before(ctx -> ctx.attribute( "ctx", ctx));
+        app.before(ctx -> ctx.attribute("ctx", ctx));
         return app;
     }
 
