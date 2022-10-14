@@ -41,11 +41,10 @@ public class App {
             if (!isProduction()) {
                 config.enableDevLogging();
             }
-            config.enableWebjars();
             JavalinThymeleaf.configure(getTemplateEngine());
         });
         addRoutes(app);
-        app.before(ctx -> ctx.attribute("ctx", ctx));
+        app.before(ctx -> ctx.attribute( "ctx", ctx));
         return app;
     }
 
