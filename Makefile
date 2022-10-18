@@ -27,6 +27,12 @@ lint:
 refresh-deps:
 	./gradlew clean build --refresh-dependencies
 
+start:
+	APP_ENV=development ./gradlew run
+
+start-dist:
+	APP_ENV=production ./build/install/java-javalin-blog/bin/java-javalin-blog
+
 build-run: build run
 
 .PHONY: build

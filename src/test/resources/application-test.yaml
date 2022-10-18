@@ -1,0 +1,10 @@
+ebean:
+  test:
+    useDocker: false
+    platform: h2
+    ddlMode: dropCreate
+    dbName: test
+  ddl:
+    run: true
+    generate: true
+    seedSql: seed-test-db.sql
