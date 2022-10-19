@@ -8,7 +8,7 @@ import java.util.List;
 import static hexlet.code.UrlValidator.getNormalizedUrl;
 
 public final class UrlController {
-    public static Handler urlsList = ctx -> {
+    public static final Handler URLS_LIST = ctx -> {
         List<Url> urls = new QUrl()
                 .orderBy()
                 .id.asc()
@@ -17,7 +17,7 @@ public final class UrlController {
         ctx.render("urls.html");
     };
 
-    public static Handler newUrl = ctx -> {
+    public static final Handler NEW_URL = ctx -> {
         String checkedUrl = getNormalizedUrl(ctx.formParam("url"));
         if (checkedUrl.isEmpty()) {
             ctx.sessionAttribute("flash", "Некорректный URL");
@@ -41,7 +41,7 @@ public final class UrlController {
         ctx.redirect("/urls");
     };
 
-    public static Handler showUrl = ctx -> {
+    public static final Handler SHOW_URL = ctx -> {
         int id = ctx.pathParamAsClass("id", Integer.class).getOrDefault(null);
         Url url = new QUrl()
                 .id.equalTo(id)

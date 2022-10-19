@@ -33,10 +33,10 @@ public class App {
         app.get("/", RootController.WELCOME);
         app.routes(() -> {
             path("urls", () -> {
-                get(UrlController.urlsList);
-                post(UrlController.newUrl);
+                get(UrlController.URLS_LIST);
+                post(UrlController.NEW_URL);
                 path("{id}", () -> {
-                    get(UrlController.showUrl);
+                    get(UrlController.SHOW_URL);
                 });
             });
         });
