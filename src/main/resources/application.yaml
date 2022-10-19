@@ -16,3 +16,4 @@ ebean:
   production:
     migration:
       run: true
+

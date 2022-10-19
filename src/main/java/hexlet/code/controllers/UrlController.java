@@ -4,10 +4,10 @@ import hexlet.code.domain.Url;
 import hexlet.code.domain.query.QUrl;
 import io.javalin.http.Handler;
 import io.javalin.http.NotFoundResponse;
-
 import java.util.List;
+import static hexlet.code.UrlValidator.getNormalizedUrl;
 
-public class UrlController {
+public final class UrlController {
     public static Handler urlsList = ctx -> {
         List<Url> urls = new QUrl()
                 .orderBy()
@@ -18,16 +18,23 @@ public class UrlController {
     };
 
     public static Handler newUrl = ctx -> {
-        String newUrl = ctx.formParam("url");
-        Url url = new Url(newUrl);
-        assert newUrl != null;
-        if (newUrl.isEmpty()) {
+        String checkedUrl = getNormalizedUrl(ctx.formParam("url"));
+        if (checkedUrl.isEmpty()) {
             ctx.sessionAttribute("flash", "Некорректный URL");
             ctx.sessionAttribute("flash-type", "danger");
-            ctx.attribute("url", url);
-            ctx.render("/");
+            ctx.redirect("/");
             return;
         }
+        Url existentUrl = new QUrl()
+                .name.equalTo(checkedUrl)
+                .findOne();
+        if (existentUrl != null) {
+            ctx.sessionAttribute("flash", "Страница уже существует");
+            ctx.sessionAttribute("flash-type", "danger");
+            ctx.redirect("/urls");
+            return;
+        }
+        Url url = new Url(checkedUrl);
         url.save();
         ctx.sessionAttribute("flash", "Страница успешно добавлена");
         ctx.sessionAttribute("flash-type", "success");
