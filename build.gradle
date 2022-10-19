@@ -47,6 +47,7 @@ dependencies {
     testImplementation 'org.assertj:assertj-core:3.23.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
     testImplementation 'io.ebean:ebean-test:12.15.1'
+    testImplementation 'com.konghq:unirest-java:3.13.6'
 }
 
 tasks.named('test') {
