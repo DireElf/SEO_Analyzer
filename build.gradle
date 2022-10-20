@@ -24,11 +24,18 @@ repositories {
 
 dependencies {
     implementation 'io.javalin:javalin:4.3.0'
+
     implementation 'org.slf4j:slf4j-simple:1.7.36'
+
     implementation 'org.thymeleaf:thymeleaf:3.0.12.RELEASE'
     implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.0.0'
     implementation 'org.thymeleaf.extras:thymeleaf-extras-java8time:3.0.4.RELEASE'
+
     implementation 'org.webjars:bootstrap:5.2.2'
+
+    implementation 'org.jsoup:jsoup:1.15.3'
+
+    implementation 'com.konghq:unirest-java:3.13.11'
 
     implementation 'com.h2database:h2:2.1.210'
     implementation 'org.postgresql:postgresql:42.3.3'
@@ -47,7 +54,7 @@ dependencies {
     testImplementation 'org.assertj:assertj-core:3.23.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
     testImplementation 'io.ebean:ebean-test:12.15.1'
-    testImplementation 'com.konghq:unirest-java:3.13.6'
+    testImplementation 'com.squareup.okhttp3:mockwebserver:4.10.0'
 }
 
 tasks.named('test') {
@@ -60,8 +67,6 @@ jacocoTestReport {
     dependsOn test
     reports {
         xml.required = true
-        csv.required = false
-        html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
     }
 }
 

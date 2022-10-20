@@ -37,6 +37,7 @@ public class App {
                 post(UrlController.NEW_URL);
                 path("{id}", () -> {
                     get(UrlController.SHOW_URL);
+                    post("/checks", UrlController.CHECK_URL);
                 });
             });
         });

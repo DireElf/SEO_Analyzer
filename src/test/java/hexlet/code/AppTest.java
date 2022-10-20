@@ -3,11 +3,10 @@ package hexlet.code;
 import hexlet.code.domain.Url;
 import hexlet.code.domain.query.QUrl;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+
+import org.junit.jupiter.api.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -16,6 +15,7 @@ import kong.unirest.Unirest;
 import io.javalin.Javalin;
 import io.ebean.DB;
 import io.ebean.Database;
+import io.ebean.Transaction;
 
 class AppTest {
     @Test
@@ -26,8 +26,11 @@ class AppTest {
     private static Javalin app;
     private static String baseUrl;
     private static Database database;
+    private static Url existingUrl;
     private final int code200 = 200;
     private final int code302 = 302;
+    private static Transaction transaction;
+    private static MockWebServer mockWebServer;
 
     @BeforeAll
     public static void beforeAll() {
@@ -36,6 +39,9 @@ class AppTest {
         int port = app.port();
         baseUrl = "http://localhost:" + port;
         database = DB.getDefault();
+        existingUrl = new Url("https://ru.hexlet.io");
+        existingUrl.save();
+
     }
 
     @AfterAll
@@ -45,13 +51,16 @@ class AppTest {
 
     @BeforeEach
     void beforeEach() {
-        database.script().run("/truncate.sql");
-        database.script().run("/seed-test-db.sql");
+        transaction = DB.beginTransaction();
+    }
+
+    @AfterEach
+    void afterEach() {
+        transaction.rollback();
     }
 
     @Nested
     class RootTest {
-
         @Test
         void testIndex() {
             HttpResponse<String> response = Unirest.get(baseUrl).asString();
@@ -70,9 +79,16 @@ class AppTest {
 
     @Nested
     class UrlTest {
-
         @Test
         void urlsList() {
+            HttpResponse<String> responsePost = Unirest
+                    .post(baseUrl + "/urls")
+                    .field("url", "https://www.google.com")
+                    .asString();
+            HttpResponse<String> responsePost1 = Unirest
+                    .post(baseUrl + "/urls")
+                    .field("url", "http://localhost:5000")
+                    .asString();
             HttpResponse<String> response = Unirest
                     .get(baseUrl + "/urls")
                     .asString();
@@ -83,16 +99,20 @@ class AppTest {
             assertThat(response.getBody()).contains("<a class=\"navbar-brand\" href=\"/\">Анализатор страниц</a>");
             assertThat(response.getBody()).contains("<a class=\"nav-link\" href=\"/\">Главная</a>");
             assertThat(response.getBody()).contains("<a class=\"nav-link\" href=\"/urls\">Сайты</a>");
-            assertThat(body).contains("<a href=\"/urls/1\">https://www.google.com</a>");
-            assertThat(body).contains("<a href=\"/urls/2\">http://localhost:5000</a>");
+            assertThat(body).contains("<a href=\"/urls/3\">https://www.google.com</a>");
+            assertThat(body).contains("<a href=\"/urls/4\">http://localhost:5000</a>");
             assertThat(response.getBody())
                     .contains("<a href=\"https://github.com/DireElf\" target=\"_blank\">DireElf</a>");
         }
 
         @Test
         void showUrl() {
+            HttpResponse<String> responsePost = Unirest
+                    .post(baseUrl + "/urls")
+                    .field("url", "https://www.google.com")
+                    .asString();
             HttpResponse<String> response = Unirest
-                    .get(baseUrl + "/urls/1")
+                    .get(baseUrl + "/urls/3")
                     .asString();
             String body = response.getBody();
 
@@ -102,11 +122,11 @@ class AppTest {
 
         @Test
         void addUrl() {
-            String inputUrl = "https://ru.hexlet.io";
+            String inputUrl = "https://dzen.ru";
             HttpResponse<String> responsePost = Unirest
                     .post(baseUrl + "/urls")
                     .field("url", inputUrl)
-                    .asEmpty();
+                    .asString();
 
             assertThat(responsePost.getStatus()).isEqualTo(code302);
             assertThat(responsePost.getHeaders().getFirst("Location")).isEqualTo("/urls");
@@ -134,7 +154,7 @@ class AppTest {
             HttpResponse<String> responsePost = Unirest
                     .post(baseUrl + "/urls")
                     .field("url", inputName)
-                    .asEmpty();
+                    .asString();
 
             assertThat(responsePost.getHeaders().getFirst("Location")).isEqualTo("/");
 
@@ -152,9 +172,13 @@ class AppTest {
             HttpResponse<String> responsePost = Unirest
                     .post(baseUrl + "/urls")
                     .field("url", inputName)
-                    .asEmpty();
+                    .asString();
+            HttpResponse<String> responsePost1 = Unirest
+                    .post(baseUrl + "/urls")
+                    .field("url", inputName)
+                    .asString();
 
-            assertThat(responsePost.getHeaders().getFirst("Location")).isEqualTo("/urls");
+            assertThat(responsePost1.getHeaders().getFirst("Location")).isEqualTo("/urls");
 
             HttpResponse<String> response = Unirest
                     .get(baseUrl + "/urls")
