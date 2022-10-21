@@ -6,8 +6,6 @@ import hexlet.code.domain.query.QUrl;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 
-import org.junit.jupiter.api.*;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 import kong.unirest.HttpResponse;
@@ -16,6 +14,16 @@ import io.javalin.Javalin;
 import io.ebean.DB;
 import io.ebean.Database;
 import io.ebean.Transaction;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 class AppTest {
     @Test
@@ -30,7 +38,7 @@ class AppTest {
     private final int code200 = 200;
     private final int code302 = 302;
     private static Transaction transaction;
-    private static MockWebServer mockWebServer;
+    private static final String FIXTURES_DIRECTORY = "src/test/resources/fixtures";
 
     @BeforeAll
     public static void beforeAll() {
@@ -39,13 +47,12 @@ class AppTest {
         int port = app.port();
         baseUrl = "http://localhost:" + port;
         database = DB.getDefault();
-        existingUrl = new Url("https://ru.hexlet.io");
+        existingUrl = new Url("https://www.example.com");
         existingUrl.save();
-
     }
 
     @AfterAll
-    public static void afterAll() {
+    public static void afterAll() throws IOException {
         app.stop();
     }
 
@@ -65,15 +72,7 @@ class AppTest {
         void testIndex() {
             HttpResponse<String> response = Unirest.get(baseUrl).asString();
             assertThat(response.getStatus()).isEqualTo(code200);
-            assertThat(response.getBody()).contains("<title>Анализатор страниц</title>");
-            assertThat(response.getBody()).contains("<a class=\"navbar-brand\" href=\"/\">Анализатор страниц</a>");
-            assertThat(response.getBody()).contains("<a class=\"nav-link\" href=\"/\">Главная</a>");
-            assertThat(response.getBody()).contains("<a class=\"nav-link\" href=\"/urls\">Сайты</a>");
-            assertThat(response.getBody()).contains("Бесплатно проверяйте сайты на SEO пригодность");
-            assertThat(response.getBody()).contains("Пример: https://www.example.com");
-            assertThat(response.getBody()).contains("Проверить");
-            assertThat(response.getBody())
-                    .contains("<a href=\"https://github.com/DireElf\" target=\"_blank\">DireElf</a>");
+            assertThat(response.getBody()).contains("Анализатор страниц");
         }
     }
 
@@ -81,51 +80,32 @@ class AppTest {
     class UrlTest {
         @Test
         void urlsList() {
-            HttpResponse<String> responsePost = Unirest
-                    .post(baseUrl + "/urls")
-                    .field("url", "https://www.google.com")
-                    .asString();
-            HttpResponse<String> responsePost1 = Unirest
-                    .post(baseUrl + "/urls")
-                    .field("url", "http://localhost:5000")
-                    .asString();
             HttpResponse<String> response = Unirest
                     .get(baseUrl + "/urls")
                     .asString();
             String body = response.getBody();
 
             assertThat(response.getStatus()).isEqualTo(code200);
-            assertThat(response.getBody()).contains("<title>Анализатор страниц</title>");
-            assertThat(response.getBody()).contains("<a class=\"navbar-brand\" href=\"/\">Анализатор страниц</a>");
-            assertThat(response.getBody()).contains("<a class=\"nav-link\" href=\"/\">Главная</a>");
-            assertThat(response.getBody()).contains("<a class=\"nav-link\" href=\"/urls\">Сайты</a>");
-            assertThat(body).contains("<a href=\"/urls/3\">https://www.google.com</a>");
-            assertThat(body).contains("<a href=\"/urls/4\">http://localhost:5000</a>");
-            assertThat(response.getBody())
-                    .contains("<a href=\"https://github.com/DireElf\" target=\"_blank\">DireElf</a>");
+            assertThat(body).contains(existingUrl.getName());
         }
 
         @Test
         void showUrl() {
-            HttpResponse<String> responsePost = Unirest
-                    .post(baseUrl + "/urls")
-                    .field("url", "https://www.google.com")
-                    .asString();
             HttpResponse<String> response = Unirest
-                    .get(baseUrl + "/urls/3")
+                    .get(baseUrl + "/urls/" + existingUrl.getId())
                     .asString();
             String body = response.getBody();
 
             assertThat(response.getStatus()).isEqualTo(code200);
-            assertThat(body).contains("Сайт https://www.google.com");
+            assertThat(body).contains(existingUrl.getName());
         }
 
         @Test
         void addUrl() {
-            String inputUrl = "https://dzen.ru";
+            String url = "https://www.google.com";
             HttpResponse<String> responsePost = Unirest
                     .post(baseUrl + "/urls")
-                    .field("url", inputUrl)
+                    .field("url", url)
                     .asString();
 
             assertThat(responsePost.getStatus()).isEqualTo(code302);
@@ -137,23 +117,23 @@ class AppTest {
             String body = response.getBody();
 
             assertThat(response.getStatus()).isEqualTo(code200);
-            assertThat(body).contains(inputUrl);
+            assertThat(body).contains(url);
             assertThat(body).contains("Страница успешно добавлена");
 
             Url actualUrl = new QUrl()
-                    .name.equalTo(inputUrl)
+                    .name.equalTo(url)
                     .findOne();
 
             assertThat(actualUrl).isNotNull();
-            assertThat(actualUrl.getName()).isEqualTo(inputUrl);
+            assertThat(actualUrl.getName()).isEqualTo(url);
         }
 
         @Test
         void addInvalidUrl() {
-            String inputName = "test";
+            String url = "test";
             HttpResponse<String> responsePost = Unirest
                     .post(baseUrl + "/urls")
-                    .field("url", inputName)
+                    .field("url", url)
                     .asString();
 
             assertThat(responsePost.getHeaders().getFirst("Location")).isEqualTo("/");
@@ -168,14 +148,16 @@ class AppTest {
 
         @Test
         void testCreateExistingUrl() {
-            String inputName = "https://www.google.com";
+            String url = "https://www.google.com";
+
             HttpResponse<String> responsePost = Unirest
                     .post(baseUrl + "/urls")
-                    .field("url", inputName)
+                    .field("url", url)
                     .asString();
+
             HttpResponse<String> responsePost1 = Unirest
                     .post(baseUrl + "/urls")
-                    .field("url", inputName)
+                    .field("url", url)
                     .asString();
 
             assertThat(responsePost1.getHeaders().getFirst("Location")).isEqualTo("/urls");
@@ -185,8 +167,41 @@ class AppTest {
                     .asString();
             String body = response.getBody();
 
-            assertThat(body).contains(inputName);
+            assertThat(body).contains(url);
             assertThat(body).contains("Страница уже существует");
+        }
+
+        @Test
+        void checkUrl() throws IOException {
+            String samplePage = Files.readString(Paths.get(FIXTURES_DIRECTORY, "sample.html"));
+
+            MockWebServer mockServer = new MockWebServer();
+            String samplePageUrl = mockServer.url("/").toString();
+            mockServer.enqueue(new MockResponse().setBody(samplePage));
+
+            HttpResponse<String> response = Unirest
+                    .post(baseUrl + "/urls/")
+                    .field("url", samplePageUrl)
+                    .asEmpty();
+
+            Url url = new QUrl()
+                    .name.equalTo(samplePageUrl.substring(0, samplePageUrl.length() - 1))
+                    .findOne();
+
+            HttpResponse<String> response1 = Unirest
+                    .post(baseUrl + "/urls/" + url.getId() + "/checks")
+                    .asEmpty();
+
+            HttpResponse<String> response2 = Unirest
+                    .get(baseUrl + "/urls/" + url.getId())
+                    .asString();
+
+            assertThat(response2.getStatus()).isEqualTo(code200);
+            assertThat(response2.getBody()).contains("Sample title");
+            assertThat(response2.getBody()).contains("Sample description");
+            assertThat(response2.getBody()).contains("Sample header");
+
+            mockServer.shutdown();
         }
     }
 }
