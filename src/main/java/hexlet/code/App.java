@@ -7,6 +7,8 @@ import io.javalin.Javalin;
 
 import io.javalin.plugin.rendering.template.JavalinThymeleaf;
 import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.extras.java8time.dialect.Java8TimeDialect;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
@@ -16,13 +18,18 @@ import static io.javalin.apibuilder.ApiBuilder.get;
 import static io.javalin.apibuilder.ApiBuilder.post;
 
 public class App {
+    private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
     private static int getPort() {
         String port = System.getenv().getOrDefault("PORT", "5000");
-        return Integer.valueOf(port);
+        int portNumber = Integer.valueOf(port);
+        LOGGER.debug("Received port {}", portNumber);
+        return portNumber;
     }
 
     private static String getMode() {
-        return System.getenv().getOrDefault("APP_ENV", "development");
+        String mode = System.getenv().getOrDefault("APP_ENV", "development");
+        LOGGER.debug("Mode {} is established", mode);
+        return mode;
     }
 
     private static boolean isProduction() {
