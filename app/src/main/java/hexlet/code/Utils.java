@@ -29,8 +29,8 @@ public final class Utils {
     }
 
     public static String getFormattedTimeStamp(Instant instant) {
-        final String PATTERN_FORMAT = "dd.MM.yyyy HH:mm";
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(PATTERN_FORMAT)
+        final String patternFORMAT = "dd.MM.yyyy HH:mm";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(patternFORMAT)
                 .withZone(ZoneId.systemDefault());
         return formatter.format(instant);
     }
