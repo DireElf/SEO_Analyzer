@@ -58,7 +58,7 @@ class AppTest {
 
     @BeforeEach
     void beforeEach() {
-        transaction = DB.beginTransaction();
+        transaction = database.beginTransaction();
     }
 
     @AfterEach
@@ -87,8 +87,7 @@ class AppTest {
 
             assertThat(response.getStatus()).isEqualTo(code200);
             assertThat(body).contains(existingUrl.getName());
-            assertThat(body).contains(existingUrl.getCreatedAt().toString());
-            assertThat(body).contains("200");
+            assertThat(body).contains("-");
         }
 
         @Test

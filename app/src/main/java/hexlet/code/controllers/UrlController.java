@@ -9,7 +9,7 @@ import io.javalin.http.NotFoundResponse;
 
 import java.util.List;
 
-import static hexlet.code.UrlFormatter.getNormalizedUrl;
+import static hexlet.code.Utils.getNormalizedUrl;
 import kong.unirest.Unirest;
 import kong.unirest.UnirestException;
 import kong.unirest.HttpResponse;

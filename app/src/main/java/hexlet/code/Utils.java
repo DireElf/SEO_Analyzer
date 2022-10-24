@@ -5,9 +5,13 @@ import org.slf4j.LoggerFactory;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
-public final class UrlFormatter {
-    private static final Logger LOGGER = LoggerFactory.getLogger(UrlFormatter.class);
+public final class Utils {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Utils.class);
+
     public static String getNormalizedUrl(String url) {
         try {
             LOGGER.info("Try to normalize URL {}", url);
@@ -22,5 +26,12 @@ public final class UrlFormatter {
         } catch (MalformedURLException e) {
             return "";
         }
+    }
+
+    public static String getFormattedTimeStamp(Instant instant) {
+        final String PATTERN_FORMAT = "dd.MM.yyyy HH:mm";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(PATTERN_FORMAT)
+                .withZone(ZoneId.systemDefault());
+        return formatter.format(instant);
     }
 }

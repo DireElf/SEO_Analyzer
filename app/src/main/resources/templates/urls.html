@@ -18,8 +18,8 @@
             <tr th:each="url : ${urls}" th:object="${url}">
                 <td th:text="*{getId()}"></td>
                 <td><a th:href="@{/urls/{id}(id=*{getId()})}" th:text="*{getName()}"></a></td>
-                <td></td>
-                <td></td>
+                <td th:text="*{getLastCheckTime()}"></td>
+                <td th:text="*{getStatusCode()}"></td>
             </tr>
             </tbody>
         </table>
