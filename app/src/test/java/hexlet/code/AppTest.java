@@ -87,6 +87,8 @@ class AppTest {
 
             assertThat(response.getStatus()).isEqualTo(code200);
             assertThat(body).contains(existingUrl.getName());
+            assertThat(body).contains(existingUrl.getCreatedAt().toString());
+            assertThat(body).contains("200");
         }
 
         @Test
