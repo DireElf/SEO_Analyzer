@@ -10,14 +10,14 @@ public final class UrlFormatter {
     private static final Logger LOGGER = LoggerFactory.getLogger(UrlFormatter.class);
     public static String getNormalizedUrl(String url) {
         try {
-            LOGGER.debug("Try to normalize URL {}", url);
+            LOGGER.info("Try to normalize URL {}", url);
             URL temp = new URL(url);
             String result = String.format("%s://%s", temp.getProtocol(), temp.getHost());
             int port = temp.getPort();
             if (port > 0) {
                 result = result + ":" + port;
             }
-            LOGGER.debug("Received normalized URL {}", result);
+            LOGGER.info("Received normalized URL {}", result);
             return result;
         } catch (MalformedURLException e) {
             return "";

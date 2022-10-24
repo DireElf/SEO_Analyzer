@@ -28,7 +28,6 @@ public class UrlController {
                 .id.asc()
                 .findList();
         ctx.attribute("urls", urls);
-        LOGGER.debug("Render urls.html with URLs list");
         ctx.render("urls.html");
     };
 
@@ -38,7 +37,6 @@ public class UrlController {
             LOGGER.info("Invalid URL is found");
             ctx.sessionAttribute("flash", "Некорректный URL");
             ctx.sessionAttribute("flash-type", "danger");
-            LOGGER.debug("Redirect to main page");
             ctx.redirect("/");
             return;
         }
@@ -50,7 +48,6 @@ public class UrlController {
             LOGGER.info("Existent URL {} is found", existentUrl.getName());
             ctx.sessionAttribute("flash", "Страница уже существует");
             ctx.sessionAttribute("flash-type", "danger");
-            LOGGER.debug("Redirect to URLs list page");
             ctx.redirect("/urls");
             return;
         }
@@ -59,7 +56,6 @@ public class UrlController {
         url.save();
         ctx.sessionAttribute("flash", "Страница успешно добавлена");
         ctx.sessionAttribute("flash-type", "success");
-        LOGGER.debug("Redirect to URLs list page");
         ctx.redirect("/urls");
     };
 
@@ -79,7 +75,6 @@ public class UrlController {
                 .findList();
         ctx.attribute("urlChecks", urlChecks);
         ctx.attribute("url", url);
-        LOGGER.debug("Render show.html with URL checks list");
         ctx.render("show.html");
     };
 
@@ -94,11 +89,11 @@ public class UrlController {
         }
         LOGGER.info("Try to check URL {}", url.getName());
         try {
-            LOGGER.debug("GET request to {}", url.getName());
+            LOGGER.info("GET request to {}", url.getName());
             HttpResponse<String> response = Unirest
                     .get(url.getName())
                     .asString();
-            LOGGER.debug("Parse received page");
+            LOGGER.info("Parse received page");
             Document body = Jsoup.parse(response.getBody());
             int statusCode = response.getStatus();
             String title = body.title();
@@ -106,16 +101,15 @@ public class UrlController {
             String description = body.selectFirst("meta[name=description]") != null
                     ? body.selectFirst("meta[name=description]").attr("content") : null;
             UrlCheck check = new UrlCheck(statusCode, title, h1, description, url);
-            LOGGER.debug("URL {} was checked, save to database", check.getUrl().getName());
+            LOGGER.info("URL {} was checked, save to database", check.getUrl().getName());
             check.save();
             ctx.sessionAttribute("flash", "Страница успешно проверена");
             ctx.sessionAttribute("flash-type", "success");
         } catch (UnirestException e) {
-            LOGGER.debug("Failed to check URL");
+            LOGGER.info("Failed to check URL");
             ctx.sessionAttribute("flash", "Не удалось проверить страницу");
             ctx.sessionAttribute("flash-type", "danger");
         }
-        LOGGER.debug("Redirect to URL page with ID {}", id);
         ctx.redirect("/urls/" + id);
     };
 }

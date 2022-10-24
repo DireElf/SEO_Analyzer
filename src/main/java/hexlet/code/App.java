@@ -22,13 +22,13 @@ public class App {
     private static int getPort() {
         String port = System.getenv().getOrDefault("PORT", "5000");
         int portNumber = Integer.valueOf(port);
-        LOGGER.debug("Received port {}", portNumber);
+        LOGGER.info("Received port {}", portNumber);
         return portNumber;
     }
 
     private static String getMode() {
         String mode = System.getenv().getOrDefault("APP_ENV", "development");
-        LOGGER.debug("Mode {} is established", mode);
+        LOGGER.info("Mode: {}", mode);
         return mode;
     }
 
