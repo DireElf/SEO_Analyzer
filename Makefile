@@ -1,37 +1,32 @@
 .DEFAULT_GOAL := build-run
 
 clean:
-	./gradlew clean
+	make -C app clean
 
 build:
-	./gradlew clean build
+	make -C app build
 
 install:
-	./gradlew clean install
+	make -C app install
 
 run-dist:
-	build/install/app/bin/app
+	make -C run-dist
 
 run:
-	./gradlew run
+	make -C app run
 
 test:
-	./gradlew test
+	make -C app test
 
 report:
-	./gradlew jacocoTestReport
+	make -C app report
 
 lint:
-	./gradlew checkstyleMain checkstyleTest
+	make -C app lint
 
-refresh-deps:
-	./gradlew clean build --refresh-dependencies
+update-deps:
+	make -C app update-deps
 
-start:
-	APP_ENV=development ./gradlew run
-
-start-dist:
-	APP_ENV=production ./build/install/java-javalin-blog/bin/java-javalin-blog
 
 build-run: build run
 
