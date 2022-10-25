@@ -31,7 +31,7 @@ start:
 	APP_ENV=development ./gradlew run
 
 start-dist:
-	APP_ENV=production ./build/install/java-javalin-blog/bin/java-javalin-blog
+	APP_ENV=production ./build/install/app/bin/app
 
 build-run: build run
 
