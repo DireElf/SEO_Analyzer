@@ -1,17 +1,19 @@
 package hexlet.code;
 
 import hexlet.code.controllers.RootController;
-
 import hexlet.code.controllers.UrlController;
-import io.javalin.Javalin;
 
+import io.javalin.Javalin;
 import io.javalin.plugin.rendering.template.JavalinThymeleaf;
-import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.extras.java8time.dialect.Java8TimeDialect;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
+
+import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
 
 import static io.javalin.apibuilder.ApiBuilder.path;
 import static io.javalin.apibuilder.ApiBuilder.get;
@@ -19,6 +21,7 @@ import static io.javalin.apibuilder.ApiBuilder.post;
 
 public class App {
     private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
+
     private static int getPort() {
         String port = System.getenv().getOrDefault("PORT", "5000");
         int portNumber = Integer.valueOf(port);
@@ -38,6 +41,7 @@ public class App {
 
     private static void addRoutes(Javalin app) {
         app.get("/", RootController.WELCOME);
+
         app.routes(() -> {
             path("urls", () -> {
                 get(UrlController.URLS_LIST);

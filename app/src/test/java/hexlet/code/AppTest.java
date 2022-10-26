@@ -13,9 +13,7 @@ import kong.unirest.Unirest;
 import io.javalin.Javalin;
 import io.ebean.DB;
 import io.ebean.Database;
-import io.ebean.Transaction;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -34,11 +32,9 @@ class AppTest {
     private static Javalin app;
     private static String baseUrl;
     private static Database database;
-    private static Url existingUrl;
     private final int code200 = 200;
     private final int code302 = 302;
     private final int entriesPerPage = 10;
-    private static Transaction transaction;
     private static final String FIXTURES_DIRECTORY = "src/test/resources/fixtures";
 
     @BeforeAll
@@ -52,12 +48,8 @@ class AppTest {
 
     @AfterAll
     public static void afterAll() throws IOException {
-        app.stop();
-    }
-
-    @BeforeEach
-    void beforeEach() {
         database.script().run("/truncate.sql");
+        app.stop();
     }
 
     @Nested
@@ -72,6 +64,15 @@ class AppTest {
 
     @Nested
     class UrlTest {
+        private final String testLink = "https://www.example.com";
+
+        @BeforeEach
+        void addTestLink() {
+            database.script().run("/truncate.sql");
+            Url testUrl = new Url(testLink);
+            testUrl.save();
+        }
+
         @Test
         void urlsList() {
             HttpResponse<String> response = Unirest
@@ -80,24 +81,24 @@ class AppTest {
             String body = response.getBody();
 
             assertThat(response.getStatus()).isEqualTo(code200);
-            assertThat(body).contains(existingUrl.getName());
+            assertThat(body).contains(testLink);
             assertThat(body).contains("-");
         }
 
         @Test
         void showUrl() {
             HttpResponse<String> response = Unirest
-                    .get(baseUrl + "/urls/" + existingUrl.getId())
+                    .get(baseUrl + "/urls/" + 1)
                     .asString();
             String body = response.getBody();
 
             assertThat(response.getStatus()).isEqualTo(code200);
-            assertThat(body).contains(existingUrl.getName());
+            assertThat(body).contains(testLink);
         }
 
         @Test
         void addUrl() {
-            String url = "https://www.ya.ru";
+            String url = "https://www.google.com";
             HttpResponse<String> responsePost = Unirest
                     .post(baseUrl + "/urls")
                     .field("url", url)
@@ -143,16 +144,9 @@ class AppTest {
 
         @Test
         void addExistingUrl() {
-            String url = "https://www.google.com";
-
-            HttpResponse<String> responsePost = Unirest
-                    .post(baseUrl + "/urls")
-                    .field("url", url)
-                    .asString();
-
             HttpResponse<String> responsePost1 = Unirest
                     .post(baseUrl + "/urls")
-                    .field("url", url)
+                    .field("url", testLink)
                     .asString();
 
             assertThat(responsePost1.getHeaders().getFirst("Location")).isEqualTo("/urls");
@@ -162,7 +156,7 @@ class AppTest {
                     .asString();
             String body = response.getBody();
 
-            assertThat(body).contains(url);
+            assertThat(body).contains(testLink);
             assertThat(body).contains("Страница уже существует");
         }
 
@@ -205,11 +199,9 @@ class AppTest {
         @Test
         void testPagination() {
             for (int i = 1; i <= entriesPerPage + 1; i++) {
-                String testUrl = String.format("http://localhost:%d", i);
-                HttpResponse<String> responsePost = Unirest
-                        .post(baseUrl + "/urls")
-                        .field("url", testUrl)
-                        .asString();
+                String testLink = String.format("http://localhost:%d", i);
+                Url url = new Url(testLink);
+                url.save();
             }
             HttpResponse<String> response1 = Unirest
                     .get(baseUrl + "/urls")
@@ -219,7 +211,7 @@ class AppTest {
             assertThat(body1).contains("http://localhost:10");
             assertThat(body1.contains("http://localhost:11")).isFalse();
             HttpResponse<String> response2 = Unirest
-                    .get(baseUrl + "/urls?page=1")
+                    .get(baseUrl + "/urls?page=2")
                     .asString();
             String body2 = response2.getBody();
             assertThat(body2).contains("http://localhost:11");

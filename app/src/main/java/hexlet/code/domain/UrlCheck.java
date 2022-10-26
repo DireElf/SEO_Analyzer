@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+
 import java.time.Instant;
 
 @Entity
@@ -16,7 +17,6 @@ public final class UrlCheck extends Model {
     @GeneratedValue
     private long id;
     private int statusCode;
-
     private String title;
     private String h1;
     @Lob
