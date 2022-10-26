@@ -3,6 +3,7 @@ package hexlet.code;
 import hexlet.code.controllers.RootController;
 import hexlet.code.controllers.UrlController;
 
+import io.ebean.DB;
 import io.javalin.Javalin;
 import io.javalin.plugin.rendering.template.JavalinThymeleaf;
 
@@ -73,7 +74,10 @@ public class App {
             JavalinThymeleaf.configure(getTemplateEngine());
         });
         addRoutes(app);
-        app.before(ctx -> ctx.attribute("ctx", ctx));
+        app.before(ctx -> {
+            ctx.attribute("ctx", ctx);
+            DB.getDefault().script().run("/restrict.sql");
+        });
         return app;
     }
 
