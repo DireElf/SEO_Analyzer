@@ -37,6 +37,7 @@ class AppTest {
     private static Url existingUrl;
     private final int code200 = 200;
     private final int code302 = 302;
+    private final int entriesPerPage = 10;
     private static Transaction transaction;
     private static final String FIXTURES_DIRECTORY = "src/test/resources/fixtures";
 
@@ -47,8 +48,6 @@ class AppTest {
         int port = app.port();
         baseUrl = "http://localhost:" + port;
         database = DB.getDefault();
-        existingUrl = new Url("https://www.example.com");
-        existingUrl.save();
     }
 
     @AfterAll
@@ -58,12 +57,7 @@ class AppTest {
 
     @BeforeEach
     void beforeEach() {
-        transaction = database.beginTransaction();
-    }
-
-    @AfterEach
-    void afterEach() {
-        transaction.rollback();
+        database.script().run("/truncate.sql");
     }
 
     @Nested
@@ -103,7 +97,7 @@ class AppTest {
 
         @Test
         void addUrl() {
-            String url = "https://www.google.com";
+            String url = "https://www.ya.ru";
             HttpResponse<String> responsePost = Unirest
                     .post(baseUrl + "/urls")
                     .field("url", url)
@@ -148,7 +142,7 @@ class AppTest {
         }
 
         @Test
-        void testCreateExistingUrl() {
+        void addExistingUrl() {
             String url = "https://www.google.com";
 
             HttpResponse<String> responsePost = Unirest
@@ -203,6 +197,32 @@ class AppTest {
             assertThat(response2.getBody()).contains("Sample header");
 
             mockServer.shutdown();
+        }
+    }
+
+    @Nested
+    class PaginationTest {
+        @Test
+        void testPagination() {
+            for (int i = 1; i <= entriesPerPage + 1; i++) {
+                String testUrl = String.format("http://localhost:%d", i);
+                HttpResponse<String> responsePost = Unirest
+                        .post(baseUrl + "/urls")
+                        .field("url", testUrl)
+                        .asString();
+            }
+            HttpResponse<String> response1 = Unirest
+                    .get(baseUrl + "/urls")
+                    .asString();
+            String body1 = response1.getBody();
+            assertThat(body1).contains("http://localhost:1");
+            assertThat(body1).contains("http://localhost:10");
+            assertThat(body1.contains("http://localhost:11")).isFalse();
+            HttpResponse<String> response2 = Unirest
+                    .get(baseUrl + "/urls?page=1")
+                    .asString();
+            String body2 = response2.getBody();
+            assertThat(body2).contains("http://localhost:11");
         }
     }
 }

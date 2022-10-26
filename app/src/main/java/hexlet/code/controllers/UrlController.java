@@ -4,10 +4,12 @@ import hexlet.code.domain.Url;
 import hexlet.code.domain.UrlCheck;
 import hexlet.code.domain.query.QUrl;
 import hexlet.code.domain.query.QUrlCheck;
+import io.ebean.PagedList;
 import io.javalin.http.Handler;
 import io.javalin.http.NotFoundResponse;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
 import static hexlet.code.Utils.getNormalizedUrl;
 import kong.unirest.Unirest;
@@ -22,12 +24,25 @@ public class UrlController {
     private static final Logger LOGGER = LoggerFactory.getLogger(UrlController.class);
 
     public static final Handler URLS_LIST = ctx -> {
+        int page = ctx.queryParamAsClass("page", Integer.class).getOrDefault(1) - 1;
+        int rowsPerPage = 10;
         LOGGER.info("Request URLs list");
-        List<Url> urls = new QUrl()
+        PagedList<Url> pagedUrls = new QUrl()
+                .setFirstRow(page * rowsPerPage)
+                .setMaxRows(rowsPerPage)
                 .orderBy()
                 .id.asc()
-                .findList();
+                .findPagedList();
+        List<Url> urls = pagedUrls.getList();
+        int lastPage = pagedUrls.getTotalPageCount() + 1;
+        int currentPage = pagedUrls.getPageIndex() + 1;
+        List<Integer> pages = IntStream
+                .range(1, lastPage)
+                .boxed()
+                .toList();
         ctx.attribute("urls", urls);
+        ctx.attribute("pages", pages);
+        ctx.attribute("currentPage", currentPage);
         ctx.render("urls.html");
     };
 
