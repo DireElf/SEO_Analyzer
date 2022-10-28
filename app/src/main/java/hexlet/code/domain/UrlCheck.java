@@ -26,9 +26,6 @@ public final class UrlCheck extends Model {
     @WhenCreated
     private Instant createdAt;
 
-    public UrlCheck() {
-    }
-
     public UrlCheck(int newStatusCode, String newTitle, String newH1, String newDescription, Url newUrl) {
         this.statusCode = newStatusCode;
         this.title = newTitle;
