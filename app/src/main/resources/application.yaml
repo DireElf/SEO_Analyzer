@@ -1,21 +1,17 @@
 datasource:
   default: ${APP_ENV}
   development:
+    migration:
+      run: true
     username: ""
     password: ""
     url: "jdbc:h2:./database"
   production:
     platform: postgres
     ddlMode: dropCreate
+    migration:
+      run: true
     username: ${PGUSER}
     password: ${PGPASSWORD}
     url: ${DATABASE_URL}
-
-ebean:
-  development:
-    migration:
-      run: true
-  production:
-    migration:
-      run: true
 
