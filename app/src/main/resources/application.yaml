@@ -5,6 +5,8 @@ datasource:
     password: ""
     url: "jdbc:h2:./database"
   production:
+    platform: postgres
+    ddlMode: dropCreate
     username: ${PGUSER}
     password: ${PGPASSWORD}
     url: ${DATABASE_URL}
