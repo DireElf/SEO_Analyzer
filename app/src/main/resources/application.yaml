@@ -12,4 +12,5 @@ datasource:
     url: ${DATABASE_URL}
     
 ebean:
-  migration.run: true    
+  migration:
+    run: true    
