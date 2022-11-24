@@ -114,7 +114,7 @@ class AppTest {
 
             assertThat(response.getStatus()).isEqualTo(code200);
             assertThat(body).contains(url);
-            assertThat(body).contains("Page successfully added");
+            assertThat(body).contains("Page added successfully");
 
             Url actualUrl = new QUrl()
                     .name.equalTo(url)
