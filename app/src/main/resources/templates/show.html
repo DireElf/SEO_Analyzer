@@ -4,7 +4,7 @@
 
 <section layout:fragment="content">
     <div class="container-lg mt-5" th:object="${url}">
-        <h1 th:text="'Сайт ' + *{getName()}"></h1>
+        <h1 th:text="'Page ' + *{getName()}"></h1>
 
         <table class="table table-bordered table-hover mt-3">
             <tbody>
@@ -13,29 +13,29 @@
                 <td th:text="*{getId()}">1</td>
             </tr>
             <tr>
-                <td>Имя</td>
+                <td>Name</td>
                 <td th:text="*{getName()}"></td>
             </tr>
             <tr>
-                <td>Дата создания</td>
+                <td>Creation date</td>
                 <td th:text="*{#temporals.format(getCreatedAt(), 'dd/MM/yyyy HH:mm')}"></td>
             </tr>
             </tbody>
         </table>
 
-        <h2 class="mt-5">Проверки</h2>
+        <h2 class="mt-5">Checks</h2>
         <form method="post" th:action="@{/urls/{id}/checks(id=*{getId()})}">
-            <button type="submit" class="btn btn-primary">Запустить проверку</button>
+            <button type="submit" class="btn btn-primary">Run check</button>
         </form>
 
         <table class="table table-bordered table-hover mt-3">
             <thead>
             <tr><th class="col-1">ID</th>
-                <th class="col-1">Код ответа</th>
+                <th class="col-1">Status code</th>
                 <th>title</th>
                 <th>h1</th>
                 <th>description</th>
-                <th class="col-2">Дата проверки</th>
+                <th class="col-2">Check date</th>
             </tr></thead>
             <tbody>
             <tr th:each="urlCheck : ${urlChecks}" th:object="${urlCheck}">
