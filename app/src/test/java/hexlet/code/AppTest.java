@@ -58,7 +58,7 @@ class AppTest {
         void testIndex() {
             HttpResponse<String> response = Unirest.get(baseUrl).asString();
             assertThat(response.getStatus()).isEqualTo(code200);
-            assertThat(response.getBody()).contains("Анализатор страниц");
+            assertThat(response.getBody()).contains("SEO Analyzer");
         }
     }
 
@@ -114,7 +114,7 @@ class AppTest {
 
             assertThat(response.getStatus()).isEqualTo(code200);
             assertThat(body).contains(url);
-            assertThat(body).contains("Страница успешно добавлена");
+            assertThat(body).contains("Page successfully added");
 
             Url actualUrl = new QUrl()
                     .name.equalTo(url)
@@ -139,7 +139,7 @@ class AppTest {
                     .asString();
             String body = response.getBody();
 
-            assertThat(body).contains("Некорректный URL");
+            assertThat(body).contains("Invalid URL");
         }
 
         @Test
@@ -157,7 +157,7 @@ class AppTest {
             String body = response.getBody();
 
             assertThat(body).contains(testLink);
-            assertThat(body).contains("Страница уже существует");
+            assertThat(body).contains("Page already exists");
         }
 
         @Test
