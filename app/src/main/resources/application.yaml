@@ -5,13 +5,14 @@ datasource:
     password: ""
     url: "jdbc:h2:./database"
   production:
-    db: 
-      driver: org.postgresql.Driver
     username: ${PGUSER}
     password: ${PGPASSWORD}
     url: ${DATABASE_URL}
     
 ebean:
-  dbName: postgres
-  migration:
-    run: true    
+  development:
+    migration:
+      run: true
+  production:
+    migration:
+      run: true
