@@ -12,5 +12,6 @@ datasource:
     url: ${DATABASE_URL}
     
 ebean:
+  dbName: postgres
   migration:
     run: true    
