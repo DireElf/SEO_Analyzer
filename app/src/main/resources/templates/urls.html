@@ -4,22 +4,24 @@
 
 <section layout:fragment="content">
     <div class="container-lg mt-5">
-        <h1>Pages</h1>
+        <h1>Сайты</h1>
         <table class="table table-bordered table-hover mt-3">
             <thead>
             <tr>
                 <th class="col-1">ID</th>
-                <th>Name</th>
-                <th class="col-2">Last check</th>
-                <th class="col-1">Status code</th>
+                <th>Имя</th>
+                <th class="col-2">Последняя проверка</th>
+                <th class="col-1">Код ответа</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="url : ${urls}" th:object="${url}">
                 <td th:text="*{getId()}"></td>
                 <td><a th:href="@{/urls/{id}(id=*{getId()})}" th:text="*{getName()}"></a></td>
-                <td th:text="*{getLastCheckTime()}"></td>
-                <td th:text="*{getStatusCode()}"></td>
+                <td th:if="${url.urlChecks.isEmpty}"></td>
+                <td th:if="${url.urlChecks.isEmpty}"></td>
+                <td th:unless="${url.urlChecks.isEmpty}" th:text="${#temporals.format(url.getUrlChecks().get(url.getUrlChecks().size() - 1).getCreatedAt(), 'dd/MM/yyyy HH:mm')}"></td>
+                <td th:unless="${url.urlChecks.isEmpty}" th:text="*{getUrlChecks().get(getUrlChecks().size() - 1).getStatusCode()}"></td>
             </tr>
             </tbody>
         </table>

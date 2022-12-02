@@ -1,7 +1,5 @@
 package hexlet.code.domain;
 
-import hexlet.code.Utils;
-
 import io.ebean.Model;
 import io.ebean.annotation.WhenCreated;
 
@@ -46,21 +44,5 @@ public final class Url extends Model {
 
     public List<UrlCheck> getUrlChecks() {
         return urlChecks;
-    }
-
-    public String getLastCheckTime() {
-        if (urlChecks.isEmpty()) {
-            return "-";
-        }
-        Instant dateTime = urlChecks.get(urlChecks.size() - 1).getCreatedAt();
-        return Utils.getFormattedTimeStamp(dateTime);
-    }
-
-    public String getStatusCode() {
-        if (urlChecks.isEmpty()) {
-            return "-";
-        }
-        return urlChecks.get(urlChecks.size() - 1)
-                .getStatusCode() + "";
     }
 }

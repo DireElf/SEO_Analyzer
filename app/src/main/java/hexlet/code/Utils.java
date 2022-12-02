@@ -6,10 +6,6 @@ import org.slf4j.LoggerFactory;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-
 public final class Utils {
     private static final Logger LOGGER = LoggerFactory.getLogger(Utils.class);
 
@@ -28,13 +24,5 @@ public final class Utils {
         } catch (MalformedURLException e) {
             return "";
         }
-    }
-
-    public static String getFormattedTimeStamp(Instant instant) {
-        final String patternFORMAT = "dd.MM.yyyy HH:mm";
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(patternFORMAT)
-                .withZone(ZoneId.systemDefault());
-        return formatter.format(instant);
     }
 }

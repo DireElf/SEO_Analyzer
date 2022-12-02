@@ -1,7 +1,9 @@
 package hexlet.code;
 
 import hexlet.code.domain.Url;
+import hexlet.code.domain.UrlCheck;
 import hexlet.code.domain.query.QUrl;
+import hexlet.code.domain.query.QUrlCheck;
 
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
@@ -58,7 +60,7 @@ class AppTest {
         void testIndex() {
             HttpResponse<String> response = Unirest.get(baseUrl).asString();
             assertThat(response.getStatus()).isEqualTo(code200);
-            assertThat(response.getBody()).contains("SEO Analyzer");
+            assertThat(response.getBody()).contains("Анализатор страниц");
         }
     }
 
@@ -82,7 +84,6 @@ class AppTest {
 
             assertThat(response.getStatus()).isEqualTo(code200);
             assertThat(body).contains(testLink);
-            assertThat(body).contains("-");
         }
 
         @Test
@@ -114,7 +115,7 @@ class AppTest {
 
             assertThat(response.getStatus()).isEqualTo(code200);
             assertThat(body).contains(url);
-            assertThat(body).contains("Page added successfully");
+            assertThat(body).contains("Страница успешно добавлена");
 
             Url actualUrl = new QUrl()
                     .name.equalTo(url)
@@ -139,7 +140,7 @@ class AppTest {
                     .asString();
             String body = response.getBody();
 
-            assertThat(body).contains("Invalid URL");
+            assertThat(body).contains("Некорректный URL");
         }
 
         @Test
@@ -157,7 +158,7 @@ class AppTest {
             String body = response.getBody();
 
             assertThat(body).contains(testLink);
-            assertThat(body).contains("Page already exists");
+            assertThat(body).contains("Страница уже существует");
         }
 
         @Test
@@ -177,6 +178,8 @@ class AppTest {
                     .name.equalTo(samplePageUrl.substring(0, samplePageUrl.length() - 1))
                     .findOne();
 
+            assertThat(url).isNotNull();
+
             HttpResponse<String> response1 = Unirest
                     .post(baseUrl + "/urls/" + url.getId() + "/checks")
                     .asEmpty();
@@ -186,6 +189,13 @@ class AppTest {
                     .asString();
 
             assertThat(response2.getStatus()).isEqualTo(code200);
+
+            UrlCheck check = new QUrlCheck()
+                    .findList().get(0);
+
+            assertThat(check).isNotNull();
+            assertThat(check.getUrl().getId()).isEqualTo(url.getId());
+
             assertThat(response2.getBody()).contains("Sample title");
             assertThat(response2.getBody()).contains("Sample description");
             assertThat(response2.getBody()).contains("Sample header");

@@ -60,7 +60,7 @@ public class UrlController {
 
         if (checkedUrl.isEmpty()) {
             LOGGER.info("Invalid URL is found");
-            ctx.sessionAttribute("flash", "Invalid URL");
+            ctx.sessionAttribute("flash", "Некорректный URL");
             ctx.sessionAttribute("flash-type", "danger");
             ctx.redirect("/");
             return;
@@ -72,7 +72,7 @@ public class UrlController {
                 .findOne();
         if (existentUrl != null) {
             LOGGER.info("Existent URL {} is found", existentUrl.getName());
-            ctx.sessionAttribute("flash", "Page already exists");
+            ctx.sessionAttribute("flash", "Страница уже существует");
             ctx.sessionAttribute("flash-type", "danger");
             ctx.redirect("/urls");
             return;
@@ -82,7 +82,7 @@ public class UrlController {
         Url url = new Url(checkedUrl);
         url.save();
 
-        ctx.sessionAttribute("flash", "Page added successfully");
+        ctx.sessionAttribute("flash", "Страница успешно добавлена");
         ctx.sessionAttribute("flash-type", "success");
         ctx.redirect("/urls");
     };
@@ -141,11 +141,11 @@ public class UrlController {
             LOGGER.info("URL {} was checked, save to database", check.getUrl().getName());
             check.save();
 
-            ctx.sessionAttribute("flash", "Page successfully checked");
+            ctx.sessionAttribute("flash", "Страница успешно проверена");
             ctx.sessionAttribute("flash-type", "success");
         } catch (UnirestException e) {
             LOGGER.info("Failed to check URL");
-            ctx.sessionAttribute("flash", "Page check failed");
+            ctx.sessionAttribute("flash", "Не удалось проверить страницу");
             ctx.sessionAttribute("flash-type", "danger");
         }
         ctx.redirect("/urls/" + id);

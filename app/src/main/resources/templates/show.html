@@ -13,29 +13,29 @@
                 <td th:text="*{getId()}">1</td>
             </tr>
             <tr>
-                <td>Name</td>
+                <td>Имя</td>
                 <td th:text="*{getName()}"></td>
             </tr>
             <tr>
-                <td>Creation date</td>
+                <td>Дата создания</td>
                 <td th:text="*{#temporals.format(getCreatedAt(), 'dd/MM/yyyy HH:mm')}"></td>
             </tr>
             </tbody>
         </table>
 
-        <h2 class="mt-5">Checks</h2>
+        <h2 class="mt-5">Проверки</h2>
         <form method="post" th:action="@{/urls/{id}/checks(id=*{getId()})}">
-            <button type="submit" class="btn btn-primary">Run check</button>
+            <button type="submit" class="btn btn-primary">Запустить проверку</button>
         </form>
 
         <table class="table table-bordered table-hover mt-3">
             <thead>
             <tr><th class="col-1">ID</th>
-                <th class="col-1">Status code</th>
+                <th class="col-1">Код ответа</th>
                 <th>title</th>
                 <th>h1</th>
                 <th>description</th>
-                <th class="col-2">Check date</th>
+                <th class="col-2">Дата проверки</th>
             </tr></thead>
             <tbody>
             <tr th:each="urlCheck : ${urlChecks}" th:object="${urlCheck}">
