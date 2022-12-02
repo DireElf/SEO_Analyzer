@@ -1,10 +1,14 @@
-package hexlet.code;
+package hexlet.code.service;
 
+import hexlet.code.domain.Url;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public final class Utils {
     private static final Logger LOGGER = LoggerFactory.getLogger(Utils.class);
@@ -24,5 +28,13 @@ public final class Utils {
         } catch (MalformedURLException e) {
             return "";
         }
+    }
+
+    public static Map<String, UrlDetails> getUrlDetails(List<Url> urlList) {
+        Map<String, UrlDetails> result = new HashMap<>();
+        for (Url url : urlList) {
+            result.put(url.getName(), new UrlDetails(url));
+        }
+        return result;
     }
 }

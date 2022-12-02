@@ -1,14 +1,17 @@
 package hexlet.code.controllers;
 
+import hexlet.code.service.UrlDetails;
+import hexlet.code.service.Utils;
 import io.ebean.PagedList;
 
 import io.javalin.http.Handler;
 import io.javalin.http.NotFoundResponse;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.IntStream;
 
-import static hexlet.code.Utils.getNormalizedUrl;
+import static hexlet.code.service.Utils.getNormalizedUrl;
 import hexlet.code.domain.Url;
 import hexlet.code.domain.UrlCheck;
 import hexlet.code.domain.query.QUrl;
@@ -40,6 +43,7 @@ public class UrlController {
                 .findPagedList();
 
         List<Url> urls = pagedUrls.getList();
+        Map<String, UrlDetails> urlDetails = Utils.getUrlDetails(urls);
 
         int lastPage = pagedUrls.getTotalPageCount() + 1;
         int currentPage = pagedUrls.getPageIndex() + 1;
@@ -50,6 +54,7 @@ public class UrlController {
                 .toList();
 
         ctx.attribute("urls", urls);
+        ctx.attribute("details", urlDetails);
         ctx.attribute("pages", pages);
         ctx.attribute("currentPage", currentPage);
         ctx.render("urls.html");

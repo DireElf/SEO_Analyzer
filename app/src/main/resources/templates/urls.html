@@ -18,10 +18,8 @@
             <tr th:each="url : ${urls}" th:object="${url}">
                 <td th:text="*{getId()}"></td>
                 <td><a th:href="@{/urls/{id}(id=*{getId()})}" th:text="*{getName()}"></a></td>
-                <td th:if="${url.urlChecks.isEmpty}"></td>
-                <td th:if="${url.urlChecks.isEmpty}"></td>
-                <td th:unless="${url.urlChecks.isEmpty}" th:text="${#temporals.format(url.getUrlChecks().get(url.getUrlChecks().size() - 1).getCreatedAt(), 'dd/MM/yyyy HH:mm')}"></td>
-                <td th:unless="${url.urlChecks.isEmpty}" th:text="*{getUrlChecks().get(getUrlChecks().size() - 1).getStatusCode()}"></td>
+                <td th:text="${details.get(url.getName()).getLastCheckTime()}"></td>
+                <td th:text="${details.get(url.getName()).getStatusCode()}"></td>
             </tr>
             </tbody>
         </table>

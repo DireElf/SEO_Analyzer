@@ -30,6 +30,9 @@ public final class Url extends Model {
         this.name = url;
     }
 
+    public Url() {
+    }
+
     public long getId() {
         return id;
     }
