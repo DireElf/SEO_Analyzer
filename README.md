@@ -1,3 +1,6 @@
+![build](https://github.com/<username>/<repo>/actions/workflows/build.yml/badge.svg)
+
+
 ### Небольшой учебный проект (веб-приложение) на Javalin, запускается с помощью make build-run
 - после запуска располагается на http://127.0.0.1:5000
 - при запуске с переменной окружения APP_ENV=development используется встроенная БД H2
