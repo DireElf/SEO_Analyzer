@@ -1,4 +1,4 @@
-![build](https://github.com/<username>/<repo>/actions/workflows/build.yml/badge.svg)
+![build](https://github.com/DireElf/SEO_Analyzer/actions/workflows/build.yml/badge.svg)
 
 
 ### Небольшой учебный проект (веб-приложение) на Javalin, запускается с помощью make build-run
