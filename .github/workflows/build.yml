@@ -1,22 +1,35 @@
-name: Build
-on: push
+name: build
+
+on:
+  push:
+  pull_request:
+
 jobs:
-  gradle:
+  gradle-build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-java@v2
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
-      - name: run Gradle build
-        run: make build
-      - name: get coverage report
-        uses: paambaati/codeclimate-action@v3.0.0
-        env:
-          CC_TEST_REPORTER_ID: ${{secrets.CODE_CLIMATE}}
-          JACOCO_SOURCE_PATH: ${{github.workspace}}/app/src/main/java
+          cache: gradle
+
+      - name: Run Gradle build
+        run: make -C app build
+
+      - name: Run tests
+        run: make -C app test
+
+      - name: Generate Jacoco coverage report
+        run: make report
+
+      - name: Upload Jacoco report as artifact
+        uses: actions/upload-artifact@v4
         with:
-          coverageCommand: make report
-          coverageLocations: ${{github.workspace}}/app/build/reports/jacoco/test/jacocoTestReport.xml:jacoco
-          
+          name: jacoco-report
+          path: app/build/reports/jacoco/test/jacocoTestReport.xml
